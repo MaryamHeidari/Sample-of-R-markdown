@@ -1,0 +1,189 @@
+---
+title: "Assignment 2 R Base Plotting"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Instructions: All plots generated for this homework assignment must be a part of the R Base plotting functions. This means no GGPLOTS, plot.ly or any other package plot functions, only R Base**
+
+
+Maryam Heidari 
+
+
+**Step 1: Import the Global Orders 2016 data set using the read.csv function (5 points)**
+```{r step1, echo=TRUE}
+DT <- read.csv(file.choose())
+head(DT, 2)
+```
+
+**Step 2 - Create a horizontal barplot of Total Sales by Market, ordered descending on total sales (i.e. the market with highest**
+**total sales should be on the top) (25 points)**
+```{r step2, echo=TRUE}
+DT1<- aggregate.data.frame(DT$Sales,by=list(DT$Market),sum)
+names(DT1)<- c("Market","Sales")
+DT1$Market
+DT1_order<- DT1[order(DT1$Sales,decreasing=FALSE),]
+barplot(DT1_order$Sales,names.arg=DT1_order$Market,
+        horiz = TRUE,
+        las =1, cex.names = 0.71)
+title("Total Sales by Market",adj = 0)
+```
+
+*Answer the following question: Does any market appear to be very different from the others for total sales?*
+
+*Answer below:*
+The Europe,USCA and LATAM markets are close to each other and Asian market is near them as well. But, the Africa is lower others.
+
+*Can you visually indicate this market as a separate color from the others?*
+```{r step2_outlier, echo=TRUE}
+DT1<- aggregate.data.frame(DT$Sales,by=list(DT$Market),sum)
+names(DT1)<- c("Market","Sales")
+DT1$Market
+DT1_order<- DT1[order(DT1$Sales,decreasing=FALSE),]
+barplot(DT1_order$Sales,names.arg=DT1_order$Market,
+        horiz = TRUE,
+        las =1, cex.names = 0.71,
+        col= c("red","gray","gray","gray","gray"))
+title("Total Sales by Market",adj = 0)
+```
+
+
+**Step 3 - Create a line chart total sales by year for each market (25 points)**
+
+```{r step3, echo=TRUE}
+dsum <-aggregate.data.frame(DT$Sales,by= list(DT$Order.Year,DT$Market), FUN = "sum")
+names(dsum) <- c("Year","Market","sum Sales")
+
+dsum.Africa <-dsum[dsum$Market=="Africa",]
+dsum.Asia <-dsum[dsum$Market=="Asia Pacific",]
+dsum.Europe <- dsum[dsum$Market=="Europe",]
+dsum.LATAM <-dsum[dsum$Market=="LATAM",]
+dsum.USCA <-dsum[dsum$Market=="USCA",]
+
+
+xrange <-range(dsum$Year)
+yrange <- range(dsum$`sum Sales`)
+
+plot(xrange, yrange, xaxt = "n",xlab = "year", ylab = "total sale", 
+     main = "total of sale each year by Market",las= 1,
+     cex.axis= 0.70)
+axis(1,labels = as.character(dsum$Year), at= as.numeric(dsum$Year))
+
+points(dsum.Africa$Year, dsum.Africa$`sum Sales`)
+points(dsum.Europe$Year, dsum.Europe$`sum Sales`)
+points(dsum.LATAM$Year, dsum.LATAM$`sum Sales`)
+points(dsum.USCA$Year, dsum.Africa$`sum Sales`)
+points(dsum.Asia$Year, dsum.Asia$`sum Sales`)
+
+lines(dsum.Africa$Year, dsum.Africa$`sum Sales`, col="red")
+lines(dsum.Europe$Year, dsum.Europe$`sum Sales`, col="green")
+lines(dsum.LATAM$Year, dsum.LATAM$`sum Sales`, col="black")
+lines(dsum.USCA$Year, dsum.USCA$`sum Sales`, col="yellow")
+lines(dsum.Asia$Year, dsum.Asia$`sum Sales`, col="blue")
+
+legend("topleft", legend=c("AsiaPacific","Europe","USCA","LATAM","Africa"), 
+       lwd=c(5,5), col=c("blue","green","yellow","black","red"))
+```
+*Answer the following question: Does the same market appear to be different in your line graph as well?*
+
+*Answer below:*
+yes, the red line which is for Africa market is so close to x-axis and it is far away than other lines.
+
+*Can you visually indicate this market as a separate color from the other markets in your graph?*
+*Can you tell your markets apart from one another in your graph? If not consider what you need to add to your graph so that you can tell them apart*
+
+```{r step3_outlier, echo=TRUE}
+dsum <- aggregate.data.frame(DT$Sales,by= list(DT$Order.Year,DT$Market), FUN = "sum")
+names(dsum) <- c("Year","Market","sum Sales")
+
+dsum.Africa <- dsum[dsum$Market=="Africa",]
+dsum.Asia <-dsum[dsum$Market=="Asia Pacific",]
+dsum.Europe <- dsum[dsum$Market=="Europe",]
+dsum.LATAM <-dsum[dsum$Market=="LATAM",]
+dsum.USCA <-dsum[dsum$Market=="USCA",]
+
+
+xrange <-range(dsum$Year)
+yrange <-range(dsum$`sum Sales`)
+
+plot(xrange, yrange, xaxt = "n",xlab = "year", ylab = "total sale", 
+     main = "total of sale each year by Market",las= 1,
+     cex.axis= 0.70)
+axis(1,labels = as.character(dsum$Year), at= as.numeric(dsum$Year))
+
+points(dsum.Africa$Year, dsum.Africa$`sum Sales`)
+points(dsum.Europe$Year, dsum.Europe$`sum Sales`)
+points(dsum.LATAM$Year, dsum.LATAM$`sum Sales`)
+points(dsum.USCA$Year, dsum.Africa$`sum Sales`)
+points(dsum.Asia$Year, dsum.Asia$`sum Sales`)
+
+lines(dsum.Africa$Year, dsum.Africa$`sum Sales`, col="red")
+lines(dsum.Europe$Year, dsum.Europe$`sum Sales`, col="black")
+lines(dsum.LATAM$Year, dsum.LATAM$`sum Sales`, col="black")
+lines(dsum.USCA$Year, dsum.USCA$`sum Sales`, col="black")
+lines(dsum.Asia$Year, dsum.Asia$`sum Sales`, col="black")
+
+legend("topleft", legend=c("AsiaPacific","Europe","USCA","LATAM","Africa"), 
+       lwd=c(5,5), col=c("black","black","black","black","red"))
+
+```
+
+
+**Step 4 - Create a box plot of total sales by market (25 points)**
+
+*Hint: use the ylim parameter to restrict your graph so that you tell the boxes apart*
+
+```{r step4, echo=TRUE}
+boxplot(Sales~Market,data=DT,ylim = range(0:8000))
+title("Total Sales by Market",adj=0)
+```
+
+*Does the general pattern you observe match that of the earlier steps 2 and 3?*
+
+*Answer below:*
+yes, the box plot of Africa is the samallest. But I do not see any general and obvious pattern
+
+*What other insights can you draw from your box plot above?*
+
+*Answer below:*
+all of the markets have a lot of upper lever outlier. And, USCA has outliers with the highest value.
+
+*Can you visually indicate this market as a separate color from the others in your boxplot graph?*
+
+```{r step4_outlier, echo=TRUE}
+boxplot(Sales~Market,data=DT,ylim = range(0:8000),
+        col= c("gray","gray","gray","gray","red") )
+title("Total Sales by Market",adj=0)
+```
+
+**Step 5 - Generate a different kind of graph other than what was produced in steps 2, 3, & 4 (20 points)** 
+
+*This means not a bar plot, line graph, or box plot. You need to use R Base plots for this question, not GGPLOT or any other plotting functions, only R Base.* 
+hist(DT$Discount, xlab = "Discount", ylab = "Frequency"
+     , main = "Histogram of dsicount" )
+     
+*Please see Week 2 Supporting Materials for helpful websites that have different types of plots for you to use. The syntax is similar to what we've done in lab 2*
+
+Submit the following two files into the Assignment 2 drop box on Blackboard. HOwever you must first place them in a folder because Blackboard cannot accept .html files, so both files need to be in a folder before you submit that folder to blackboard.
+
+Be sure to include your name in the filenames per the examples below.
+ 
+File 1: This RMD document with your plots and answers completed above
+Example: **Yoni_Dvorkis_ALY6070_Assignment2.Rmd**
+
+File 2: HTML version of this file after you click "Knit" above
+Example: **Yoni_Dvorkis_ALY6070_Assignment2.html**
+
+
+
+***Academic Integrity Reminder:***
+Collaborating on this assignment with anyone is strictly prohibited and will be considered a violation of your Academic Integrity Agreement that you signed prior to joining the program. This includes contacting former students of the course, or collaborating with currently enrolled students. If you have any questions on the assignment I expect you to reach out to me during class or after class dismisses, or you can email me at yonidvorkis@northeastern.edu. 
+
+Otherwise be sure to work on the assignment by yourself so that I know you've developed the skills to create these R Base graphs and did not copy your work from that of other students or from anywhere else. These skills are critical to being successful in the workforce and I want to be sure you've developed them by the time the course concludes.
+
+Good luck!
