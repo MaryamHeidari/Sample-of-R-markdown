@@ -1,0 +1,121 @@
+---
+title: "Assignment 3 Statistical Correlation and GGPLOT"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Maryam Heidari
+
+For this assignment, we will use the widely famous IRIS dataset which is included in every R installation (you automatically have it when you first start RStudio. Just type "iris" and run it to see)
+
+Numerous guides have been written on the exploration of this widely known dataset. Iris was introduced by Ronald Fisher in his 1936 paper The use of multiple measurements in taxonomic problems, contains three plant species (setosa, virginica, versicolor) and four features measured for each sample. These quantify the morphologic variation of the iris flower in its three species, all measurements given in centimeters.
+
+
+
+**Step 1- Load the relevant libraries**
+
+```{r step1, echo=TRUE}
+library(ggplot2)
+library(DataExplorer)
+data <- iris
+```
+
+**Step 2 - Create a correlation matrix of the Iris dataset using the DataExplorer correlation function we used in class in lab 3. Include only continuous variables in your correlation plot to avoid confusion as factor variables don't make sense in a correlation plot (10 points)**
+
+```{r step2, echo=TRUE}
+str(data)
+str(data)
+data1 <- data[,1:4]
+str(data)
+plot_correlation(data1, title="Correlation between all of continuous variables")
+```
+
+*Answer the following: What is the correlation coefficient between Petal Length and Petal Width?* 
+The correlation coefficient between Petal Length and Petal Width is 0.96
+
+*How does this compare with the correlation coefficient of Sepal Length and Sepal Width?*
+The correlation coefficient between Sepal Length and Sepal Width is -0.12 which shows that they have little negative relationship. The relationship between Petal Length and Petal Width not only is posative, but also it is really strong
+
+**Step 3 - Create three separate correlation matrices for each species of iris flower (20 points)**
+
+```{r step3, echo=TRUE}
+data_setosa <- data[data$Species == 'setosa',]
+data_versicolor <- data[data$Species == 'versicolor',]
+data_virginica <- data[data$Species == 'virginica',]
+plot_correlation(data_setosa, title = "Correlation Matrix for Setosa")
+plot_correlation(data_versicolor, title = "Correlation Matrix for Versicolor")
+plot_correlation(data_virginica, title = "Correlation Matrix for Virginica")
+```
+*Answer the following: Are the correlation coefficients similar or different when comparing Sepal length*
+*vs. Sepal Width among the three species of Iris flowers?*
+the correlation coefficients of Sepal length vs. Sepal Width is different for each species of Iris flowes. For Setosa, it is 0.74 (which is the biggest), for Versicolor, it is 0.53, and for Virginica, it is 0.46.
+
+**Step 4 - Create a box plot of Petal Length by flower species. Make each box plot a different color for each species (10 points)**
+
+```{r step4, echo=TRUE}
+ggplot(data)+
+  geom_boxplot(aes(x=Species, y=Petal.Length, fill= Species),show.legend = FALSE)+
+  ggtitle("Box Plot of Petal Lenght for each Flower Species")
+```
+
+*Answer the following: What insights can you draw from the box plot you just generated?*
+Setosa species has the lowest range of petal lenght, and have some outlier as well ( three ourlier). 
+
+**Step 5 - Create a Scatter jitter plot of Petal Width on the x axis vs. Petal Length on y axis, for the species of flower you identify in your boxplot that has the smallest median Petal Length (15 points)**
+
+```{r step5, echo=TRUE}
+ggplot(data_setosa,aes(x=data_setosa$Petal.Width, y=data_setosa$Petal.Length), )+
+  geom_jitter()+
+  xlab("Petal Width")+ ylab("Petal Length")+ ggtitle("Scatter Jitter Plot of Setosa")
+```
+
+**Step 6 - Now switch this plot to scatter point without the jitter. There appears to be an outlier point on the right of the graph that has Petal Width of 0.6. Can you figure out a way to make this point a different color than the rest? (20 points)**
+
+```{r step6, echo=TRUE}
+ggplot(data_setosa)+
+  geom_point(aes(x=data_setosa$Petal.Width, y=data_setosa$Petal.Length, color=data_setosa$Petal.Width>0.59), show.legend = FALSE)+
+  xlab("Petal Width")+ ylab("Petal Length")+ggtitle("Scatter Plot of Setosa")
+```
+
+**Step 7- Finally, create a vertical bar graph that sums observations by flower species after filtering the Iris dataset to only observations with Sepal Length less than 6.** 
+
+**Order your bar graph so that the species with the most records is on the left and the species with the least records is on the right**
+
+**Add the counts as text labels in your graph for each bar (25 points)**
+
+```{r step7, echo=TRUE}
+data2<- data[data$Sepal.Length<6,]
+data_count<- data.frame(table(data2$Species))
+data_ordered<-data_count[order(data_count$Freq, decreasing = TRUE),]
+names(data_ordered)=c("class","counts")
+ggplot(data = data_ordered,mapping = aes(x=reorder(class, -counts),y=counts,label = counts))+
+  geom_bar(stat="identity",
+           fill = c("light blue","light green ","red"))+
+  xlab("")+
+  geom_text(nudge_y = +3, color = 'red')+
+  ggtitle("count of observation for each species with Sepal Length less than 6 ")
+```
+
+*Answer the following: What are the count of observations by species in your graph above*
+The count of observations for setosa is twice as versicolor. And the observations for virginica is 7 which is so little comper to other species. 
+
+
+
+***Before you submit your files, check that each of your ggplots includes a proper TITLE and properly labels the x and y axes*** 
+
+Submit the following two files into the Assignment 3 drop box on Blackboard. Be sure to include your name in the filenames per the examples below.
+File 1: This RMD document with your plots and answers completed above
+Example: **Yoni_Dvorkis_ALY6070_Assignment3.Rmd**
+
+File 2: HTML version of this file after you click "Knit" above
+Example: **Yoni_Dvorkis_ALY6070_Assignment3.html**
+
+
+
+***Academic Integrity Reminder:***
+Collaborating on this assignment with any other student is prohibited and will be considered a violation of your Academic Integrity Agreement that you signed prior to joining the program.
+
+Good luck!
